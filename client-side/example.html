@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Photo Uploader and Preview</title>
+    
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <div id="upload_photo_page_inner"></div>
+    
+    <script type="text/javascript" src="paper-full.min.js"></script>
+    <script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="photo_upload.js"></script>
+    
+    <script type="text/javascript">
+        var upload_preview_obj = new UPLOAD_PREVIEW("upload_photo_page_inner");
+        upload_preview_obj.init("upload_photo_page_inner");
+        
+        upload_preview_obj.upload_photo = function(data_url) {
+            /* Use this function to override upload_photo with your own code */
+            var data = {
+                'photo_data': data_url
+            };
+            
+            $.ajax({
+               type:     'POST',
+               url:      'https://topohawk.com/t1/photo-data/add_photo.php',
+               dataType: 'json',
+               data:     data,
+               success:  function(response) {
+                    if (response.result_code > 0) {
+                        /* Success Code Here */
+                        upload_preview_obj.notify_upload_complete(true);
+                    } else {
+                        /* API Fail Code Here */
+                        upload_preview_obj.notify_upload_complete(false);
+                    }
+                   
+                    console.log(response);
+               },
+               error: function (req, status, error) {
+                    /* AJAX Fail Code Here */
+                    upload_preview_obj.notify_upload_complete(false);
+                    console.log(error);
+               }
+            });
+        };
+    </script>
+    
+</body>
+</html>
