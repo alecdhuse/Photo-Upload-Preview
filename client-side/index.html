@@ -19,7 +19,7 @@
             <div id="upload_photo_footer_left">
                 <div id="upload_photo_tools">
                     <div class="photo_upload_tool" id="rotate_ccw_div">
-                        <svg width="24" height="24" id="rotate_ccw_svg" class="upload_svg_icon_inactive" onclick="rotate_ccw()" role="img" aria-label="Rotate Counterclockwise">
+                        <svg width="24" height="24" id="rotate_ccw_svg" class="upload_svg_icon_inactive" role="img" aria-label="Rotate Counterclockwise">
                             <title>Rotate Counterclockwise</title>
                             <g transform="translate(0,-1028.3622)">
                                 <g transform="matrix(0.24444449,0,0,0.24444449,-0.22222835,795.34027)">
@@ -35,7 +35,7 @@
                     </div>
                     
                     <div class="photo_upload_tool" id="rotate_cw_div">
-                        <svg width="24" height="24" id="rotate_cw_svg" class="upload_svg_icon_inactive" onclick="rotate_cw()" role="img" aria-label="Rotate Clockwise">
+                        <svg width="24" height="24" id="rotate_cw_svg" class="upload_svg_icon_inactive" role="img" aria-label="Rotate Clockwise">
                             <title>Rotate Clockwise</title>
                             <g transform="translate(0,-1028.3622)">
                                 <g transform="matrix(0.24444445,0,0,0.24444445,-0.22222452,795.34031)">
@@ -51,7 +51,7 @@
                     </div>
                     
                     <div class="photo_upload_tool" id="crop_photo_div">
-                        <svg width="24" height="24" id="crop_photo_svg" class="upload_svg_icon_inactive" onclick="crop_button()" role="img" aria-label="Crop Photo">
+                        <svg width="24" height="24" id="crop_photo_svg" class="upload_svg_icon_inactive" role="img" aria-label="Crop Photo">
                             <title>Crop Photo</title>
                             <g transform="translate(0,-1028.3623)">
                                 <g transform="matrix(0.9610391,0,0,0.95932488,0.02098112,42.272408)">
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div id="upload_photo_footer_right">
-                <svg width="50" height="50" class="upload_svg_icon_inactive" id="photo_upload_ok_svg" onclick="ok_button()" role="img" aria-label="OK">
+                <svg width="50" height="50" class="upload_svg_icon_inactive" id="photo_upload_ok_svg" role="img" aria-label="OK">
                     <title>OK</title>
                     <g transform="matrix(0.51371618,0,0,0.51564698,-0.51380477,-0.45516914)">
                         <path d="m 96.915,6.877 c -1.656,-1.52 -4.375,-1.536 -6.062,0 L 31.845,61.496 6.993,52.295 C 5.085,51.62 2.907,52.326 1.81,53.931 0.644,55.587 0.745,57.814 2.062,59.386 L 29.33,91.413 C 30.19,92.409 31.424,93 32.722,93 l 0.473,-0.019 c 1.216,-0.133 2.347,-0.758 3.073,-1.703 L 97.387,12.904 c 1.419,-1.823 1.217,-4.473 -0.472,-6.027 z m -64.193,84.636 0,0.019 0,0 0,-0.019 z" />
@@ -105,6 +105,7 @@
     
         UPLOAD_PREVIEW.prototype.init = function(canvas_id) {
             var up_obj = this;
+            this.resize_canvas();
             
             paper.install(window);
             
@@ -114,10 +115,26 @@
             
             this.paper_scope.setup(this.canvas);
             paper = this.paper_scope;
-            this.resize_canvas();
             
+            /* Add listeners */
             document.getElementById("input_upload_image").addEventListener("change", function(event) {
                 up_obj.draw(up_obj, event);
+            });
+            
+            document.getElementById("crop_photo_svg").addEventListener("click", function(event) {
+                up_obj.crop_button(up_obj);
+            });
+            
+            document.getElementById("photo_upload_ok_svg").addEventListener("click", function(event) {
+                up_obj.ok_button();
+            });
+            
+            document.getElementById("rotate_ccw_svg").addEventListener("click", function(event) {
+                up_obj.rotate_ccw(up_obj);
+            });
+    
+            document.getElementById("rotate_cw_svg").addEventListener("click", function(event) {
+                up_obj.rotate_cw(up_obj);
             });
             
             $("#" + canvas_id).mouseup(function(event) {
@@ -132,11 +149,11 @@
             this.paper_scope.view.draw();
         };
     
-        UPLOAD_PREVIEW.prototype.cancel_crop_button  = function() {
-            if (this.image_crop === true) {
-                this.cancel_crop();
+        UPLOAD_PREVIEW.prototype.crop_button  = function(up_obj) {
+            if (up_obj.image_crop === true) {
+                up_obj.cancel_crop();
             } else {
-                this.start_photo_crop();
+                up_obj.start_photo_crop();
             }
         };
     
@@ -174,7 +191,7 @@
         };
 
         UPLOAD_PREVIEW.prototype.resize_raster  = function() {
-            this.upload_image_raster.position = paper.view.center;
+            this.upload_image_raster.position = this.paper_scope.view.center;
             this.paper_scope.view.zoom = 1;
             
             var photo_size = this.upload_image_raster.size;
@@ -204,35 +221,35 @@
             
             this.upload_image_raster.onMouseMove = function(event) {
                 if (up_obj.image_crop === true) {
-                    up_obj.move_crop_mask(crop_path, event);
+                    up_obj.move_crop_mask(up_obj.crop_path, event);
                 }
             }
             
             this.upload_image_raster.onMouseUp = function(event) {
-                up_obj.upload_photo_mouse_up(crop_path);
+                up_obj.upload_photo_mouse_up(up_obj.crop_path);
             }
             
             this.paper_scope.view.draw();
         };
     
-        UPLOAD_PREVIEW.prototype.rotate_cw  = function() {
-            this.upload_image_raster.rotate(90);
+        UPLOAD_PREVIEW.prototype.rotate_cw  = function(up_obj) {
+            up_obj.upload_image_raster.rotate(90);
 
-            if (typeof this.crop_path.rotate != "undefined") {
-                this.crop_path.rotate(90);
+            if (typeof up_obj.crop_path.rotate != "undefined") {
+                up_obj.crop_path.rotate(90);
             }
 
-            this.resize_raster();
+            up_obj.resize_raster();
         };
 
-        UPLOAD_PREVIEW.prototype.rotate_ccw  = function() {
-            this.upload_image_raster.rotate(-90);
+        UPLOAD_PREVIEW.prototype.rotate_ccw  = function(up_obj) {
+            up_obj.upload_image_raster.rotate(-90);
             
-            if (typeof this.crop_path.rotate != "undefined") {
-                this.crop_path.rotate(-90);
+            if (typeof up_obj.crop_path.rotate != "undefined") {
+                up_obj.crop_path.rotate(-90);
             }
             
-            this.resize_raster();
+            up_obj.resize_raster();
         };
 
         UPLOAD_PREVIEW.prototype.ok_button  = function() {
@@ -241,7 +258,7 @@
                     this.upload_photo();
                 } else {
                     /* Crop Photo */
-                    var img_rotation = upload_image_raster.rotation;
+                    var img_rotation = this.upload_image_raster.rotation;
                 
                     if (Math.abs(Math.round(img_rotation)) != 0) {
                         var crop_x = this.crop_path.point_bounds.y1 - this.crop_path.image_bounds.top;
@@ -256,7 +273,7 @@
                     }
                     
                     var crop_bounds = new Rectangle(crop_x, crop_y, crop_w, crop_h);
-                    var cropped_dataurl = upload_image_raster.getSubRaster(crop_bounds).toDataURL();
+                    var cropped_dataurl = this.upload_image_raster.getSubRaster(crop_bounds).toDataURL();
                     
                     this.paper_scope.project.clear();
                     
@@ -295,8 +312,8 @@
                         y2: this.paper_scope.view.center.y - (photo_size.width / 2) + photo_size.width
                     };
                 } else {
-                    var crop_width = this.photo_size.width;
-                    var crop_height = this.photo_size.height;
+                    var crop_width = photo_size.width;
+                    var crop_height = photo_size.height;
                     
                     var point_bounds = {
                         x1: this.paper_scope.view.center.x - (photo_size.width / 2),
@@ -325,12 +342,12 @@
                 };
                 
                 /* Crop Path Mouse Events */
-                crop_path.onMouseLeave = function(event) {
+                this.crop_path.onMouseLeave = function(event) {
                     $("#upload_photo_canvas").css('cursor', 'auto');
                 }
 
-                crop_path.onMouseMove = function(event) {
-                    var photo_size = upload_image_raster.size;
+                this.crop_path.onMouseMove = function(event) {
+                    var photo_size = up_obj.upload_image_raster.size;
                     
                     if (this.resize_click === false) {
                         /* Reset crop mask move flags */
@@ -364,7 +381,7 @@
                             /* Top */
                             $("#upload_photo_canvas").css('cursor', 'row-resize');
                             up_obj.crop_mask_adjust.top = true;
-                        } else if (event.point.y > this.point_bounds.y2 - rup_obj.esize_mouse_margin) {
+                        } else if (event.point.y > this.point_bounds.y2 - up_obj.esize_mouse_margin) {
                             /* Bottom */
                             $("#upload_photo_canvas").css('cursor', 'row-resize');
                             up_obj.crop_mask_adjust.bottom = true;
@@ -385,12 +402,12 @@
                     }
                 }
 
-                crop_path.onMouseDown = function(event) {
+                this.crop_path.onMouseDown = function(event) {
                     this.resize_click_start = event.point;
                     this.resize_click = true;
                 }
 
-                crop_path.onMouseUp = function(event) {
+                this.crop_path.onMouseUp = function(event) {
                     up_obj.upload_photo_mouse_up(this);
                 }
 
@@ -399,9 +416,9 @@
         };
 
         UPLOAD_PREVIEW.prototype.move_crop_mask  = function(crop_path, event) {
-            if (crop_path.resize_click === true) {
-                if (crop_mask_adjust.move === false) {
-                    if (crop_mask_adjust.left === true) {
+            if (this.crop_path.resize_click === true) {
+                if (this.crop_mask_adjust.move === false) {
+                    if (this.crop_mask_adjust.left === true) {
                         crop_path.point_bounds.x1 = crop_path.bounds.left + (event.point.x - crop_path.resize_click_start.x);
                         
                         if (crop_path.point_bounds.x1 < crop_path.image_bounds.left) {
@@ -409,7 +426,7 @@
                         }
                     }
                     
-                    if (crop_mask_adjust.right === true) {
+                    if (this.crop_mask_adjust.right === true) {
                         crop_path.point_bounds.x2 = crop_path.bounds.right + (event.point.x - crop_path.resize_click_start.x);
                         
                         if (crop_path.point_bounds.x2 > crop_path.image_bounds.right) {
@@ -417,7 +434,7 @@
                         }
                     }
                     
-                    if (crop_mask_adjust.top === true) {
+                    if (this.crop_mask_adjust.top === true) {
                         crop_path.point_bounds.y1 = crop_path.bounds.top + (event.point.y - crop_path.resize_click_start.y);
                         
                         if (crop_path.point_bounds.y1 < crop_path.image_bounds.top) {
@@ -425,7 +442,7 @@
                         }
                     }
                     
-                    if (crop_mask_adjust.bottom === true) {
+                    if (this.crop_mask_adjust.bottom === true) {
                         crop_path.point_bounds.y2 = crop_path.bounds.bottom + (event.point.y - crop_path.resize_click_start.y);
                         
                         if (crop_path.point_bounds.y2 > crop_path.image_bounds.bottom) {
