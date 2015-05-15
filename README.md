@@ -9,4 +9,4 @@ Javascript photo uploader with preview using Paper.js
 See a demo on [Code Pen](http://codepen.io/alecdhuse/pen/aONoyP)
 
 ##Screenshot
-![Screenshot](https://github.com/alecdhuse/Photo-Upload-Preview/blob/master/screen-shots/screen-shot-1.jpg)
+![Screenshot](https://github.com/alecdhuse/Photo-Upload-Preview/blob/master/screenshots/screenshot-1.jpg)
