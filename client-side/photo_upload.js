@@ -1,13 +1,13 @@
 function UPLOAD_PREVIEW(object_id) {
-    this.canvas_id = "upload_photo_canvas";
-    this.crop_path = {};
-    this.image_crop = false;
-    this.image_selected = false;
+    this._canvas_id = "upload_photo_canvas";
+    this._crop_path = {};
+    this._image_crop = false;
+    this._image_selected = false;
     this._object_id = object_id;
     this._paper_scope = {};
-    this.upload_image_raster;
+    this._upload_image_raster;
     
-    this.crop_mask_adjust = {
+    this._crop_mask_adjust = {
         left:   false,
         right:  false,
         top:    false,
@@ -27,7 +27,7 @@ UPLOAD_PREVIEW.prototype.init = function(object_id) {
     var up_obj = this;
     paper.install(window);
     
-    this.canvas = document.getElementById(this.canvas_id);
+    this.canvas = document.getElementById(this._canvas_id);
     this._object_id  = object_id;
     this._paper_scope = new paper.PaperScope();
     
@@ -55,8 +55,8 @@ UPLOAD_PREVIEW.prototype.init = function(object_id) {
         up_obj.rotate_cw(up_obj);
     });
     
-    $("#" + this.canvas_id).mouseup(function(event) {
-        up_obj._upload_photo_mouse_up(up_obj.crop_path);
+    $("#" + this._canvas_id).mouseup(function(event) {
+        up_obj._upload_photo_mouse_up(up_obj._crop_path);
     });
 }
 
@@ -79,9 +79,9 @@ UPLOAD_PREVIEW.prototype._build_objects = function(parent_object) {
 }
 
 UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
-    if (this.crop_path.resize_click === true) {
-        if (this.crop_mask_adjust.left === true) {
-            if (this.crop_mask_adjust.move === true && crop_path.point_bounds.x2 == crop_path.image_bounds.right) {
+    if (this._crop_path.resize_click === true) {
+        if (this._crop_mask_adjust.left === true) {
+            if (this._crop_mask_adjust.move === true && crop_path.point_bounds.x2 == crop_path.image_bounds.right) {
                 /* Don't Shrink the mask */
             } else {
                 crop_path.point_bounds.x1 = crop_path.bounds.left + (event.point.x - crop_path.resize_click_start.x);
@@ -92,8 +92,8 @@ UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
             }
         }
         
-        if (this.crop_mask_adjust.right === true) {
-            if (this.crop_mask_adjust.move === true && crop_path.point_bounds.x1 == crop_path.image_bounds.left) {
+        if (this._crop_mask_adjust.right === true) {
+            if (this._crop_mask_adjust.move === true && crop_path.point_bounds.x1 == crop_path.image_bounds.left) {
                 /* Don't Shrink the mask */
             } else {
                 crop_path.point_bounds.x2 = crop_path.bounds.right + (event.point.x - crop_path.resize_click_start.x);
@@ -104,8 +104,8 @@ UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
             }
         }
         
-        if (this.crop_mask_adjust.top === true) {
-            if (this.crop_mask_adjust.move === true && crop_path.point_bounds.y2 == crop_path.image_bounds.bottom) {
+        if (this._crop_mask_adjust.top === true) {
+            if (this._crop_mask_adjust.move === true && crop_path.point_bounds.y2 == crop_path.image_bounds.bottom) {
                 /* Don't Shrink the mask */
             } else {
                 crop_path.point_bounds.y1 = crop_path.bounds.top + (event.point.y - crop_path.resize_click_start.y);
@@ -116,8 +116,8 @@ UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
             }
         }
         
-        if (this.crop_mask_adjust.bottom === true) {
-            if (this.crop_mask_adjust.move === true && crop_path.point_bounds.y1 == crop_path.image_bounds.top) {
+        if (this._crop_mask_adjust.bottom === true) {
+            if (this._crop_mask_adjust.move === true && crop_path.point_bounds.y1 == crop_path.image_bounds.top) {
                 /* Don't Shrink the mask */
             } else {
                 crop_path.point_bounds.y2 = crop_path.bounds.bottom + (event.point.y - crop_path.resize_click_start.y);
@@ -140,12 +140,12 @@ UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
 };
 
 UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
-    if (this.image_selected === true) {
-        this.image_crop = true;
+    if (this._image_selected === true) {
+        this._image_crop = true;
         $("#crop_photo_svg").attr('class', 'upload_svg_icon_selected');
     
-        var img_rotation = Math.abs(Math.round(this.upload_image_raster.rotation));
-        var photo_size = this.upload_image_raster.size;
+        var img_rotation = Math.abs(Math.round(this._upload_image_raster.rotation));
+        var photo_size = this._upload_image_raster.size;
         var crop_width = 0;
         var crop_height = 0;
         var up_obj = this;
@@ -173,17 +173,17 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
         }
         
         var crop_rectangle = new Rectangle(point_bounds.x1, point_bounds.y1, crop_width, crop_height);
-        this.crop_path = new Path.Rectangle(crop_rectangle);
+        this._crop_path = new Path.Rectangle(crop_rectangle);
 
-        this.crop_path.selectedColor = new Color(0.8, 0.8, 0.8, 0.7);
-        this.crop_path.fillColor = new Color(0, 0, 0, 0);
-        this.crop_path.strokeColor = new Color(0.8, 0.8, 0.8, 0.7);
-        this.crop_path.strokeWidth = 20;
+        this._crop_path.selectedColor = new Color(0.8, 0.8, 0.8, 0.7);
+        this._crop_path.fillColor = new Color(0, 0, 0, 0);
+        this._crop_path.strokeColor = new Color(0.8, 0.8, 0.8, 0.7);
+        this._crop_path.strokeWidth = 20;
         
-        this.crop_path.resize_click = false;
-        this.crop_path.resize_click_start = {};
-        this.crop_path.point_bounds = point_bounds;
-        this.crop_path.image_bounds = {
+        this._crop_path.resize_click = false;
+        this._crop_path.resize_click_start = {};
+        this._crop_path.point_bounds = point_bounds;
+        this._crop_path.image_bounds = {
             left:   point_bounds.x1,
             right:  point_bounds.x2,
             top:    point_bounds.y1,
@@ -191,76 +191,76 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
         };
         
         /* Crop Path Mouse Events */
-        this.crop_path.onMouseLeave = function(event) {
+        this._crop_path.onMouseLeave = function(event) {
             $("#upload_photo_canvas").css('cursor', 'auto');
         }
 
-        this.crop_path.onMouseMove = function(event) {
-            var photo_size = up_obj.upload_image_raster.size;
+        this._crop_path.onMouseMove = function(event) {
+            var photo_size = up_obj._upload_image_raster.size;
             
             if (this.resize_click === false) {
                 /* Reset crop mask move flags */
-                up_obj.crop_mask_adjust.left = false;
-                up_obj.crop_mask_adjust.right = false;
-                up_obj.crop_mask_adjust.top = false;
-                up_obj.crop_mask_adjust.bottom = false;
-                up_obj.crop_mask_adjust.move = false;
+                up_obj._crop_mask_adjust.left = false;
+                up_obj._crop_mask_adjust.right = false;
+                up_obj._crop_mask_adjust.top = false;
+                up_obj._crop_mask_adjust.bottom = false;
+                up_obj._crop_mask_adjust.move = false;
                     
                 if ( (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
                     /* Top Left */
                     $("#upload_photo_canvas").css('cursor', 'nwse-resize');
-                    up_obj.crop_mask_adjust.left = true;
-                    up_obj.crop_mask_adjust.top = true;
+                    up_obj._crop_mask_adjust.left = true;
+                    up_obj._crop_mask_adjust.top = true;
                 } else if ( (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
                     /* Top Right */
                     $("#upload_photo_canvas").css('cursor', 'nesw-resize');
-                    up_obj.crop_mask_adjust.right = true;
-                    up_obj.crop_mask_adjust.top = true;
+                    up_obj._crop_mask_adjust.right = true;
+                    up_obj._crop_mask_adjust.top = true;
                 } else if ( (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
                     /* Bottom Left */
                     $("#upload_photo_canvas").css('cursor', 'nesw-resize');
-                    up_obj.crop_mask_adjust.left = true;
-                    up_obj.crop_mask_adjust.bottom = true;
+                    up_obj._crop_mask_adjust.left = true;
+                    up_obj._crop_mask_adjust.bottom = true;
                 } else if ( (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
                     /* Bottom Right */
                     $("#upload_photo_canvas").css('cursor', 'nwse-resize');
-                    up_obj.crop_mask_adjust.right = true;
-                    up_obj.crop_mask_adjust.bottom = true;
+                    up_obj._crop_mask_adjust.right = true;
+                    up_obj._crop_mask_adjust.bottom = true;
                 } else if (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) {
                     /* Top */
                     $("#upload_photo_canvas").css('cursor', 'row-resize');
-                    up_obj.crop_mask_adjust.top = true;
+                    up_obj._crop_mask_adjust.top = true;
                 } else if (event.point.y > this.point_bounds.y2 - up_obj.esize_mouse_margin) {
                     /* Bottom */
                     $("#upload_photo_canvas").css('cursor', 'row-resize');
-                    up_obj.crop_mask_adjust.bottom = true;
+                    up_obj._crop_mask_adjust.bottom = true;
                 } else if (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin) {
                     /* Left Side */
                     $("#upload_photo_canvas").css('cursor', 'col-resize');
-                    up_obj.crop_mask_adjust.left = true;
+                    up_obj._crop_mask_adjust.left = true;
                 } else if (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin) {
                     /* Right Side */
                     $("#upload_photo_canvas").css('cursor', 'col-resize');
-                    up_obj.crop_mask_adjust.right = true;
+                    up_obj._crop_mask_adjust.right = true;
                 } else {
                     $("#upload_photo_canvas").css('cursor', 'move');
-                    up_obj.crop_mask_adjust.left = true;
-                    up_obj.crop_mask_adjust.right = true;
-                    up_obj.crop_mask_adjust.top = true;
-                    up_obj.crop_mask_adjust.bottom = true;
-                    up_obj.crop_mask_adjust.move = true;
+                    up_obj._crop_mask_adjust.left = true;
+                    up_obj._crop_mask_adjust.right = true;
+                    up_obj._crop_mask_adjust.top = true;
+                    up_obj._crop_mask_adjust.bottom = true;
+                    up_obj._crop_mask_adjust.move = true;
                 }
             } else {
                 up_obj._move_crop_mask(this, event);
             }
         }
 
-        this.crop_path.onMouseDown = function(event) {
+        this._crop_path.onMouseDown = function(event) {
             this.resize_click_start = event.point;
             this.resize_click = true;
         }
 
-        this.crop_path.onMouseUp = function(event) {
+        this._crop_path.onMouseUp = function(event) {
             up_obj._upload_photo_mouse_up(this);
         }
 
@@ -274,7 +274,7 @@ UPLOAD_PREVIEW.prototype._upload_photo_mouse_up  = function(crop_path) {
 };
 
 UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
-    if (this.image_selected === true) {
+    if (this._image_selected === true) {
         /* Show help popup */
         $("#upload_photo_help").css('visibility','visible');
         $("#upload_photo_help_inner").html("Uploading Photo");
@@ -288,13 +288,13 @@ UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
 
 UPLOAD_PREVIEW.prototype.cancel_crop  = function() {
     $("#crop_photo_svg").attr('class', 'upload_svg_icon');
-    this.image_crop = false;
-    this.crop_path.removeSegments();
+    this._image_crop = false;
+    this._crop_path.removeSegments();
     this._paper_scope.view.draw();
 };
 
 UPLOAD_PREVIEW.prototype.crop_button  = function(up_obj) {
-    if (up_obj.image_crop === true) {
+    if (up_obj._image_crop === true) {
         up_obj.cancel_crop();
     } else {
         up_obj._start_photo_crop();
@@ -310,11 +310,11 @@ UPLOAD_PREVIEW.prototype.draw  = function(up_obj, ev) {
     var src = url.createObjectURL(f);
     var up_obj = this;
     
-    this.upload_image_raster = new Raster(src);
+    this._upload_image_raster = new Raster(src);
     
-    this.upload_image_raster.onLoad = function() {
+    this._upload_image_raster.onLoad = function() {
         up_obj.resize_raster();
-        up_obj.image_selected = true;
+        up_obj._image_selected = true;
         
         $("#rotate_ccw_svg").attr('class', 'upload_svg_icon');
         $("#rotate_cw_svg").attr('class', 'upload_svg_icon');
@@ -327,22 +327,22 @@ UPLOAD_PREVIEW.prototype.resize_canvas  = function() {
     var new_width = $("#upload_photo_page_inner").width();
     var new_height = $(window).innerHeight() - 100;
     
-    $("#" + this.canvas_id).css({'width': new_width});
-    $("#" + this.canvas_id).css({'height': new_height});
+    $("#" + this._canvas_id).css({'width': new_width});
+    $("#" + this._canvas_id).css({'height': new_height});
     
     var photo_help_top = $("#upload_photo_footer").position().top - 110;
     $("#upload_photo_help").css({'top': photo_help_top});
 };
 
 UPLOAD_PREVIEW.prototype.resize_raster  = function() {
-    this.upload_image_raster.position = this._paper_scope.view.center;
+    this._upload_image_raster.position = this._paper_scope.view.center;
     this._paper_scope.view.zoom = 1;
     
-    var photo_size = this.upload_image_raster.size;
+    var photo_size = this._upload_image_raster.size;
     var view_size = this._paper_scope.view.size;
     var width_ratio  = view_size.width  / photo_size.width;
     var height_ratio = view_size.height / photo_size.height;
-    var img_rotation = Math.abs(Math.round(this.upload_image_raster.rotation));
+    var img_rotation = Math.abs(Math.round(this._upload_image_raster.rotation));
     var up_obj = this;
     
     if (img_rotation == 90 || img_rotation == 270) {
@@ -363,72 +363,72 @@ UPLOAD_PREVIEW.prototype.resize_raster  = function() {
         }
     }
     
-    this.upload_image_raster.onMouseMove = function(event) {
-        if (up_obj.image_crop === true) {
-            up_obj._move_crop_mask(up_obj.crop_path, event);
+    this._upload_image_raster.onMouseMove = function(event) {
+        if (up_obj._image_crop === true) {
+            up_obj._move_crop_mask(up_obj._crop_path, event);
         }
     }
     
-    this.upload_image_raster.onMouseUp = function(event) {
-        up_obj._upload_photo_mouse_up(up_obj.crop_path);
+    this._upload_image_raster.onMouseUp = function(event) {
+        up_obj._upload_photo_mouse_up(up_obj._crop_path);
     }
     
     this._paper_scope.view.draw();
 };
 
 UPLOAD_PREVIEW.prototype.rotate_cw  = function(up_obj) {
-    up_obj.upload_image_raster.rotate(90);
+    up_obj._upload_image_raster.rotate(90);
 
-    if (typeof up_obj.crop_path.rotate != "undefined") {
-        up_obj.crop_path.rotate(90);
+    if (typeof up_obj._crop_path.rotate != "undefined") {
+        up_obj._crop_path.rotate(90);
     }
 
     up_obj.resize_raster();
 };
 
 UPLOAD_PREVIEW.prototype.rotate_ccw  = function(up_obj) {
-    up_obj.upload_image_raster.rotate(-90);
+    up_obj._upload_image_raster.rotate(-90);
     
-    if (typeof up_obj.crop_path.rotate != "undefined") {
-        up_obj.crop_path.rotate(-90);
+    if (typeof up_obj._crop_path.rotate != "undefined") {
+        up_obj._crop_path.rotate(-90);
     }
     
     up_obj.resize_raster();
 };
 
 UPLOAD_PREVIEW.prototype.ok_button  = function() {
-    if (this.image_selected === true) {
-        if (this.image_crop === false) {
+    if (this._image_selected === true) {
+        if (this._image_crop === false) {
             this._upload_photo_prep();
         } else {
             /* Crop Photo */
-            var img_rotation = this.upload_image_raster.rotation;
+            var img_rotation = this._upload_image_raster.rotation;
         
             if (Math.abs(Math.round(img_rotation)) != 0) {
-                var crop_x = this.crop_path.point_bounds.y1 - this.crop_path.image_bounds.top;
-                var crop_y = this.crop_path.image_bounds.right - this.crop_path.point_bounds.x2;
-                var crop_w = this.crop_path.bounds.height;
-                var crop_h = this.crop_path.bounds.width;
+                var crop_x = this._crop_path.point_bounds.y1 - this._crop_path.image_bounds.top;
+                var crop_y = this._crop_path.image_bounds.right - this._crop_path.point_bounds.x2;
+                var crop_w = this._crop_path.bounds.height;
+                var crop_h = this._crop_path.bounds.width;
             } else {
-                var crop_x = this.crop_path.point_bounds.x1 - this.crop_path.image_bounds.left;
-                var crop_y = this.crop_path.point_bounds.y1 - this.crop_path.image_bounds.top;
-                var crop_w = this.crop_path.point_bounds.x2 - this.crop_path.point_bounds.x1;
-                var crop_h = this.crop_path.point_bounds.y2 - this.crop_path.point_bounds.y1;
+                var crop_x = this._crop_path.point_bounds.x1 - this._crop_path.image_bounds.left;
+                var crop_y = this._crop_path.point_bounds.y1 - this._crop_path.image_bounds.top;
+                var crop_w = this._crop_path.point_bounds.x2 - this._crop_path.point_bounds.x1;
+                var crop_h = this._crop_path.point_bounds.y2 - this._crop_path.point_bounds.y1;
             }
             
             var crop_bounds = new Rectangle(crop_x, crop_y, crop_w, crop_h);
-            var cropped_dataurl = this.upload_image_raster.getSubRaster(crop_bounds).toDataURL();
+            var cropped_dataurl = this._upload_image_raster.getSubRaster(crop_bounds).toDataURL();
             
             this._paper_scope.project.clear();
             
-            this.upload_image_raster = new Raster(cropped_dataurl);
+            this._upload_image_raster = new Raster(cropped_dataurl);
             this.resize_raster();
             
             if (Math.abs(Math.round(img_rotation)) != 0) {
-                this.upload_image_raster.rotate(img_rotation);
+                this._upload_image_raster.rotate(img_rotation);
             }
             
-            this.image_crop = false;
+            this._image_crop = false;
             $("#crop_photo_svg").attr('class', 'upload_svg_icon');
         }
     }
