@@ -65,7 +65,6 @@ UPLOAD_PREVIEW.prototype.init = function(object_id) {
     
     $("#" + this._canvas_id).mouseup(function(event) {
         up_obj._upload_photo_mouse_up(up_obj._crop_path);
-        up.obj._crop_mask_adjust.reset();
     });
 }
 
@@ -293,7 +292,7 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
 UPLOAD_PREVIEW.prototype._upload_photo_mouse_up  = function(crop_path) {
     crop_path.resize_click_start = {};
     crop_path.resize_click = false;
-    up_obj._crop_mask_adjust.reset();
+    this._crop_mask_adjust.reset();
 };
 
 UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
