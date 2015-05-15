@@ -65,6 +65,7 @@ UPLOAD_PREVIEW.prototype.init = function(object_id) {
     
     $("#" + this._canvas_id).mouseup(function(event) {
         up_obj._upload_photo_mouse_up(up_obj._crop_path);
+        up.obj._crop_mask_adjust.reset();
     });
 }
 
