@@ -12,7 +12,15 @@ function UPLOAD_PREVIEW(object_id) {
         right:  false,
         top:    false,
         bottom: false,
-        move:   false
+        move:   false,
+        
+        reset: function() {
+            this.left = false;
+            this.right = false;
+            this.top = false;
+            this.bottom = false;
+            this.move = false;
+        }
     };
     
     /* Public */
@@ -196,59 +204,33 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
         }
 
         this._crop_path.onMouseMove = function(event) {
-            var photo_size = up_obj._upload_image_raster.size;
-            
             if (this.resize_click === false) {
-                /* Reset crop mask move flags */
-                up_obj._crop_mask_adjust.left = false;
-                up_obj._crop_mask_adjust.right = false;
-                up_obj._crop_mask_adjust.top = false;
-                up_obj._crop_mask_adjust.bottom = false;
-                up_obj._crop_mask_adjust.move = false;
-                    
                 if ( (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
                     /* Top Left */
                     $("#upload_photo_canvas").css('cursor', 'nwse-resize');
-                    up_obj._crop_mask_adjust.left = true;
-                    up_obj._crop_mask_adjust.top = true;
                 } else if ( (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
                     /* Top Right */
                     $("#upload_photo_canvas").css('cursor', 'nesw-resize');
-                    up_obj._crop_mask_adjust.right = true;
-                    up_obj._crop_mask_adjust.top = true;
                 } else if ( (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
                     /* Bottom Left */
                     $("#upload_photo_canvas").css('cursor', 'nesw-resize');
-                    up_obj._crop_mask_adjust.left = true;
-                    up_obj._crop_mask_adjust.bottom = true;
                 } else if ( (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
                     /* Bottom Right */
                     $("#upload_photo_canvas").css('cursor', 'nwse-resize');
-                    up_obj._crop_mask_adjust.right = true;
-                    up_obj._crop_mask_adjust.bottom = true;
                 } else if (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) {
                     /* Top */
                     $("#upload_photo_canvas").css('cursor', 'row-resize');
-                    up_obj._crop_mask_adjust.top = true;
-                } else if (event.point.y > this.point_bounds.y2 - up_obj.esize_mouse_margin) {
+                } else if (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) {
                     /* Bottom */
                     $("#upload_photo_canvas").css('cursor', 'row-resize');
-                    up_obj._crop_mask_adjust.bottom = true;
                 } else if (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin) {
                     /* Left Side */
                     $("#upload_photo_canvas").css('cursor', 'col-resize');
-                    up_obj._crop_mask_adjust.left = true;
                 } else if (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin) {
                     /* Right Side */
                     $("#upload_photo_canvas").css('cursor', 'col-resize');
-                    up_obj._crop_mask_adjust.right = true;
                 } else {
                     $("#upload_photo_canvas").css('cursor', 'move');
-                    up_obj._crop_mask_adjust.left = true;
-                    up_obj._crop_mask_adjust.right = true;
-                    up_obj._crop_mask_adjust.top = true;
-                    up_obj._crop_mask_adjust.bottom = true;
-                    up_obj._crop_mask_adjust.move = true;
                 }
             } else {
                 up_obj._move_crop_mask(this, event);
@@ -258,8 +240,47 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
         this._crop_path.onMouseDown = function(event) {
             this.resize_click_start = event.point;
             this.resize_click = true;
+            
+            /* Reset crop mask move flags */
+            up_obj._crop_mask_adjust.reset();
+                
+            if ( (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
+                /* Top Left */
+                up_obj._crop_mask_adjust.left = true;
+                up_obj._crop_mask_adjust.top = true;
+            } else if ((event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
+                /* Top Right */
+                up_obj._crop_mask_adjust.right = true;
+                up_obj._crop_mask_adjust.top = true;
+            } else if ((event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin)) {
+                /* Bottom Left */
+                up_obj._crop_mask_adjust.left = true;
+                up_obj._crop_mask_adjust.bottom = true;
+            } else if ((event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) && (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin)) {
+                /* Bottom Right */
+                up_obj._crop_mask_adjust.right = true;
+                up_obj._crop_mask_adjust.bottom = true;
+            } else if (event.point.y < this.point_bounds.y1 + up_obj.resize_mouse_margin) {
+                /* Top */
+                up_obj._crop_mask_adjust.top = true;
+            } else if (event.point.y > this.point_bounds.y2 - up_obj.resize_mouse_margin) {
+                /* Bottom */
+                up_obj._crop_mask_adjust.bottom = true;
+            } else if (event.point.x < this.point_bounds.x1 + up_obj.resize_mouse_margin) {
+                /* Left Side */
+                up_obj._crop_mask_adjust.left = true;
+            } else if (event.point.x > this.point_bounds.x2 - up_obj.resize_mouse_margin) {
+                /* Right Side */
+                up_obj._crop_mask_adjust.right = true;
+            } else {
+                up_obj._crop_mask_adjust.left = true;
+                up_obj._crop_mask_adjust.right = true;
+                up_obj._crop_mask_adjust.top = true;
+                up_obj._crop_mask_adjust.bottom = true;
+                up_obj._crop_mask_adjust.move = true;
+            }
         }
-
+        
         this._crop_path.onMouseUp = function(event) {
             up_obj._upload_photo_mouse_up(this);
         }
@@ -271,6 +292,7 @@ UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
 UPLOAD_PREVIEW.prototype._upload_photo_mouse_up  = function(crop_path) {
     crop_path.resize_click_start = {};
     crop_path.resize_click = false;
+    up_obj._crop_mask_adjust.reset();
 };
 
 UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
