@@ -6,6 +6,8 @@ Javascript photo uploader with preview using Paper.js
 
 [Paper.js](http://paperjs.org/)
 
+##Demo
+
 See a demo on [Code Pen](http://codepen.io/alecdhuse/pen/aONoyP)
 
 ##Screenshot
