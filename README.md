@@ -3,6 +3,7 @@ Javascript photo uploader with preview using Paper.js
 
 ##Requirments
 [jQuery](https://jquery.com/)
+
 [Paper.js](http://paperjs.org/)
 
 See a demo on [Code Pen](http://codepen.io/alecdhuse/pen/aONoyP)
