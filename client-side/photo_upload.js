@@ -32,7 +32,7 @@ function UPLOAD_PREVIEW(object_id) {
 
 UPLOAD_PREVIEW.prototype.init = function(object_id, height, width) {
     if ((typeof height != "undefined") && (typeof width != "undefined")) {
-        this._canvas_height = height;
+        this._canvas_height = height - 80;
         this._canvas_width  = width;
     }
     
@@ -48,6 +48,10 @@ UPLOAD_PREVIEW.prototype.init = function(object_id, height, width) {
     
     this._paper_scope.setup(this.canvas);
     paper = this._paper_scope;
+    
+    $("#" + this._object_id).css({'width':  this._canvas_width});
+    $("#" + this._canvas_id).css({'width':  this._canvas_width});
+    $("#" + this._canvas_id).css({'height': this._canvas_height});
     
     /* Add listeners */
     document.getElementById("input_upload_image").addEventListener("change", function(event) {
