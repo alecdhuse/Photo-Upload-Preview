@@ -1,5 +1,7 @@
 function UPLOAD_PREVIEW(object_id) {
     this._canvas_id = "upload_photo_canvas";
+    this._canvas_height = 300;
+    this._canvas_width  = 300;
     this._crop_path = {};
     this._image_crop = false;
     this._image_selected = false;
@@ -28,7 +30,12 @@ function UPLOAD_PREVIEW(object_id) {
     this.upload_photo = function (data_url) {};
 };
 
-UPLOAD_PREVIEW.prototype.init = function(object_id) {
+UPLOAD_PREVIEW.prototype.init = function(object_id, height, width) {
+    if ((typeof height != "undefined") && (typeof width != "undefined")) {
+        this._canvas_height = height;
+        this._canvas_width  = width;
+    }
+    
     this._build_objects(object_id);
     this.resize_canvas();
     
@@ -69,7 +76,9 @@ UPLOAD_PREVIEW.prototype.init = function(object_id) {
 }
 
 UPLOAD_PREVIEW.prototype._build_objects = function(parent_object) {
-    var html_code = "<div id='upload_photo_div'><canvas id='upload_photo_canvas'></canvas><div id='upload_photo_help'><div id='upload_photo_help_inner'></div></div></div><div id='upload_photo_footer'><div id='upload_photo_footer_left'><div id='upload_photo_tools'><div class='photo_upload_tool' id='rotate_ccw_div'></div><div class='photo_upload_tool' id='rotate_cw_div'></div><div class='photo_upload_tool' id='crop_photo_div'></div></div><div><input type='file' name='img' size='65' id='input_upload_image' /></div></div><div id='upload_photo_footer_right'></div></div>";
+    var canvas_html = "<canvas id='upload_photo_canvas' width='" + this._canvas_width + "' height='" + this._canvas_height + "'></canvas>";
+    
+    var html_code = "<div id='upload_photo_div'>" + canvas_html + "<div id='upload_photo_help'><div id='upload_photo_help_inner'></div></div></div><div id='upload_photo_footer'><div id='upload_photo_footer_left'><div id='upload_photo_tools'><div class='photo_upload_tool' id='rotate_ccw_div'></div><div class='photo_upload_tool' id='rotate_cw_div'></div><div class='photo_upload_tool' id='crop_photo_div'></div></div><div><input type='file' name='img' size='65' id='input_upload_image' /></div></div><div id='upload_photo_footer_right'></div></div>";
     
     var crop_svg_code = "<svg width='24' height='24' id='crop_photo_svg' class='upload_svg_icon_inactive' role='img' aria-label='Crop Photo'><title>Crop Photo</title><g transform='translate(0,-1028.3623)'><g transform='matrix(0.9610391,0,0,0.95932488,0.02098112,42.272408)'><path d='m 4.5000003,1038.1417 0,-9.7206 1.7253069,0 1.7253069,0 0,7.9952 0,7.9954 8.5002929,0 8.500292,0 0,1.7253 0,1.7253 -10.225599,0 -10.2255997,0 0,-9.7206 z' /><path transform='translate(0,1028.3623)' d='m 0.04524562,6.2919835 0,-1.7104718 1.71047178,0 1.7104717,0 0,1.7104718 0,1.7104717 -1.7104717,0 -1.71047178,0 0,-1.7104717 z' /><path transform='translate(0,1028.3623)' d='m 17.015808,11.524015 0,-3.5215598 -4.024639,0 -4.0246394,0 0,-1.7104717 0,-1.7104718 5.7351114,0 5.735111,0 0,5.2320312 0,5.2320311 -1.710472,0 -1.710472,0 0,-3.521559 z' /><path transform='translate(0,1028.3623)' d='m 17.015808,22.256386 0,-1.710471 1.710472,0 1.710472,0 0,1.710471 0,1.710472 -1.710472,0 -1.710472,0 0,-1.710472 z' /></g></g></svg>";
     
