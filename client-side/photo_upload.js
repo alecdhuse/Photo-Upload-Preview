@@ -49,10 +49,6 @@ UPLOAD_PREVIEW.prototype.init = function(object_id, height, width) {
     this._paper_scope.setup(this.canvas);
     paper = this._paper_scope;
     
-    $("#" + this._object_id).css({'width':  this._canvas_width});
-    $("#" + this._canvas_id).css({'width':  this._canvas_width});
-    $("#" + this._canvas_id).css({'height': this._canvas_height});
-    
     /* Add listeners */
     document.getElementById("input_upload_image").addEventListener("change", function(event) {
         up_obj.draw(up_obj, event);
@@ -359,11 +355,10 @@ UPLOAD_PREVIEW.prototype.draw  = function(up_obj, ev) {
 };
 
 UPLOAD_PREVIEW.prototype.resize_canvas  = function() {
-    var new_width = $("#upload_photo_page_inner").width();
-    var new_height = $(window).innerHeight() - 100;
-    
-    $("#" + this._canvas_id).css({'width': new_width});
-    $("#" + this._canvas_id).css({'height': new_height});
+    $("#" + this._object_id).css({'width':  this._canvas_width});
+    $("#" + this._object_id).css({'height': this._canvas_height + 80});
+    $("#" + this._canvas_id).css({'width':  this._canvas_width});
+    $("#" + this._canvas_id).css({'height': this._canvas_height});
     
     var photo_help_top = $("#upload_photo_footer").position().top - 110;
     $("#upload_photo_help").css({'top': photo_help_top});
