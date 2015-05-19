@@ -337,21 +337,21 @@ UPLOAD_PREVIEW.prototype.draw  = function(up_obj, ev) {
     
     var img = new Image();
     var f = document.getElementById("input_upload_image").files[0];
-    var url = window.URL || window.webkitURL;
-    var src = url.createObjectURL(f);
-    var up_obj = this;
     
-    this._upload_image_raster = new Raster(src);
-    
-    this._upload_image_raster.onLoad = function() {
-        up_obj.resize_raster();
-        up_obj._image_selected = true;
+    if (window.FileReader) {
+        var reader  = new FileReader();
         
-        $("#rotate_ccw_svg").attr('class', 'upload_svg_icon');
-        $("#rotate_cw_svg").attr('class', 'upload_svg_icon');
-        $("#crop_photo_svg").attr('class', 'upload_svg_icon');
-        $("#photo_upload_ok_svg").attr('class', 'upload_svg_icon');
-    };
+        reader.onloadend = function () {
+            var src = reader.result;
+            up_obj.set_raster(src);
+        }
+        
+        reader.readAsDataURL(f);
+    } else {
+        var url = window.URL || window.webkitURL;
+        var src = url.createObjectURL(f);
+        this.set_raster(src);
+    }
 };
 
 UPLOAD_PREVIEW.prototype.resize_canvas  = function() {
@@ -463,6 +463,23 @@ UPLOAD_PREVIEW.prototype.ok_button  = function() {
         }
     }
 };
+
+UPLOAD_PREVIEW.prototype.set_raster  = function(src) {
+    var up_obj = this;
+    
+    paper = this._paper_scope;
+    
+    this._upload_image_raster = new Raster(src);
+    this._upload_image_raster.onLoad = function() {
+        up_obj.resize_raster();
+        up_obj._image_selected = true;
+        
+        $("#rotate_ccw_svg").attr('class', 'upload_svg_icon');
+        $("#rotate_cw_svg").attr('class', 'upload_svg_icon');
+        $("#crop_photo_svg").attr('class', 'upload_svg_icon');
+        $("#photo_upload_ok_svg").attr('class', 'upload_svg_icon');
+    };
+}
 
 UPLOAD_PREVIEW.prototype.notify_upload_complete  = function(successful) {
     if (successful === true) {
