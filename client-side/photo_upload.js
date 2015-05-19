@@ -158,6 +158,7 @@ UPLOAD_PREVIEW.prototype._move_crop_mask  = function(crop_path, event) {
 
 UPLOAD_PREVIEW.prototype._start_photo_crop  = function() {
     if (this._image_selected === true) {
+        paper = this._paper_scope;
         this._image_crop = true;
         $("#crop_photo_svg").attr('class', 'upload_svg_icon_selected');
     
@@ -432,6 +433,7 @@ UPLOAD_PREVIEW.prototype.ok_button  = function() {
             this._upload_photo_prep();
         } else {
             /* Crop Photo */
+            paper = this._paper_scope;
             var img_rotation = this._upload_image_raster.rotation;
         
             if (Math.abs(Math.round(img_rotation)) != 0) {
@@ -466,7 +468,6 @@ UPLOAD_PREVIEW.prototype.ok_button  = function() {
 
 UPLOAD_PREVIEW.prototype.set_raster  = function(src) {
     var up_obj = this;
-    
     paper = this._paper_scope;
     
     this._upload_image_raster = new Raster(src);
