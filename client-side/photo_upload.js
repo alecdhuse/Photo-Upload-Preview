@@ -344,14 +344,14 @@ UPLOAD_PREVIEW.prototype.draw  = function(up_obj, ev) {
         
         reader.onloadend = function () {
             var src = reader.result;
-            up_obj.set_raster(src);
+            up_obj.set_raster(src, 0);
         }
         
         reader.readAsDataURL(f);
     } else {
         var url = window.URL || window.webkitURL;
         var src = url.createObjectURL(f);
-        this.set_raster(src);
+        this.set_raster(src, 0);
     }
 };
 
@@ -366,6 +366,7 @@ UPLOAD_PREVIEW.prototype.resize_canvas  = function() {
 };
 
 UPLOAD_PREVIEW.prototype.resize_raster  = function() {
+    paper = this._paper_scope;
     this._upload_image_raster.position = this._paper_scope.view.center;
     this._paper_scope.view.zoom = 1;
     
@@ -453,12 +454,7 @@ UPLOAD_PREVIEW.prototype.ok_button  = function() {
             
             this._paper_scope.project.clear();
             
-            this._upload_image_raster = new Raster(cropped_dataurl);
-            this.resize_raster();
-            
-            if (Math.abs(Math.round(img_rotation)) != 0) {
-                this._upload_image_raster.rotate(img_rotation);
-            }
+            this.set_raster(cropped_dataurl, img_rotation);
             
             this._image_crop = false;
             $("#crop_photo_svg").attr('class', 'upload_svg_icon');
@@ -466,7 +462,7 @@ UPLOAD_PREVIEW.prototype.ok_button  = function() {
     }
 };
 
-UPLOAD_PREVIEW.prototype.set_raster  = function(src) {
+UPLOAD_PREVIEW.prototype.set_raster  = function(src, img_rotation) {
     var up_obj = this;
     paper = this._paper_scope;
     
@@ -474,6 +470,10 @@ UPLOAD_PREVIEW.prototype.set_raster  = function(src) {
     this._upload_image_raster.onLoad = function() {
         up_obj.resize_raster();
         up_obj._image_selected = true;
+        
+        if (Math.abs(Math.round(img_rotation)) != 0) {
+            this._upload_image_raster.rotate(img_rotation);
+        }
         
         $("#rotate_ccw_svg").attr('class', 'upload_svg_icon');
         $("#rotate_cw_svg").attr('class', 'upload_svg_icon');
