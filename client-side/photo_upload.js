@@ -49,7 +49,25 @@ UPLOAD_PREVIEW.prototype.init = function(object_id, height, width) {
     this._paper_scope.setup(this.canvas);
     paper = this._paper_scope;
     
+    /* Write Help Text */
+    var text = new paper.PointText(this._paper_scope.view.center);
+    text.content = "Click to select a photo";
+    text.style = {
+        fontFamily: 'Lucida Grande',
+        fontWeight: 'bold',
+        fontSize: 20,
+        fillColor: 'white',
+        justification: 'center'
+    };
+    this._paper_scope.view.draw();
+    
     /* Add listeners */
+    this.canvas.addEventListener("click", function(event) {
+        if (up_obj._image_selected === false) {
+            $("#input_upload_image").trigger("click");
+        }
+    });
+    
     document.getElementById("input_upload_image").addEventListener("change", function(event) {
         up_obj.draw(up_obj, event);
     });
@@ -312,7 +330,7 @@ UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
         $("#upload_photo_help_inner").html("Uploading Photo");
                     
         var changed_image = this._paper_scope.project.layers[0].rasterize();
-        var img_dataurl = changed_image.toDataURL();
+        var img_dataurl = changed_image.canvas.toDataURL("image/jpeg", 1.0);
         
         this.upload_photo(img_dataurl);
     }
@@ -466,6 +484,7 @@ UPLOAD_PREVIEW.prototype.set_raster  = function(src, img_rotation) {
     var up_obj = this;
     paper = this._paper_scope;
     
+    this._paper_scope.project.clear();
     this._upload_image_raster = new Raster(src);
     this._upload_image_raster.onLoad = function() {
         up_obj.resize_raster();
