@@ -8,6 +8,10 @@ body {
     margin-left: 18px;
 }
 
+#input_upload_image {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
+}
+
 .photo_upload_tool {
     float: left;
     margin-left: 4px;
