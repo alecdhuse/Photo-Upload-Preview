@@ -29,8 +29,7 @@
             $file_name = "test" . $file_ext;
             
             $uri = substr($data,strpos($data,",")+1);
-            $encoded_data = str_replace(' ','+', $uri);
-            $decoded_data = base64_decode($encoded_data);
+            $decoded_data = base64_decode($uri);
             
             file_put_contents($file_name, $decoded_data);
             

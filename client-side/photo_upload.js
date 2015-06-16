@@ -330,7 +330,7 @@ UPLOAD_PREVIEW.prototype._upload_photo_prep  = function() {
         $("#upload_photo_help_inner").html("Uploading Photo");
                     
         var changed_image = this._paper_scope.project.layers[0].rasterize();
-        var img_dataurl = changed_image.canvas.toDataURL("image/jpeg", 1.0);
+        var img_dataurl = changed_image.canvas.toDataURL("image/jpeg").replace(/ /g, '+');
         
         this.upload_photo(img_dataurl);
     }
